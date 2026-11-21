@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Segredos e ambiente
+.env
+.env.*
+!.env.example
+kaggle.json
+
+# Dados e artefatos clínicos
+/data/
+/outputs/
+/mlruns/
+*.db
+*.dcm
+*.dicom
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Ferramentas
+.DS_Store
+.vscode/
+.idea/
