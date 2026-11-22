@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project-cnn-mammo"
+version = "0.1.0"
+description = "Pipeline individual e reproduzível para pesquisa com CNNs em mamografia"
+requires-python = ">=3.11"
+authors = [{name = "Marco Antonio Wandraski"}]
+
+[project.optional-dependencies]
+ml = [
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "pillow>=10",
+  "pydicom>=3",
+  "scikit-learn>=1.5",
+  "torch>=2.3",
+  "torchvision>=0.18",
+  "segmentation-models-pytorch>=0.3.3",
+]
+dev = ["ruff>=0.8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
