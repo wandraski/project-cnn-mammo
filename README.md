@@ -31,6 +31,7 @@ Veja [`docs/requirements/sprint-07.md`](docs/requirements/sprint-07.md).
 ## Fontes
 
 - [`docs/requirements/professor.md`](docs/requirements/professor.md): requisitos extraídos do PDF de orientação.
+- [`docs/requirements/professores-adjacentes.md`](docs/requirements/professores-adjacentes.md): 237 requisitos canônicos de Engenharia de Software e MLOps (99 + 138), com critério de aceite e proveniência.
 - [`docs/requirements/sprint-07.md`](docs/requirements/sprint-07.md): ponto inicial do trabalho.
 - [`docs/requirements/slide-intake.md`](docs/requirements/slide-intake.md): processo para incorporar os slides das disciplinas.
 - [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md): código e próximas verticais das Sprints 7–11.

@@ -4,6 +4,7 @@
 |---|---|---|
 | Repositório novo | implementado | histórico Git deste repositório |
 | Requisitos do PDF principal | extraído | `docs/requirements/professor.md` |
+| Requisitos adjacentes (ES + MLOps) | extraídos e canônicos | `docs/requirements/professores-adjacentes.md` |
 | Plano da Sprint 7 | extraído | `docs/requirements/sprint-07.md` |
 | Código de treino CNN/U-Net | planejado; dependências declaradas | `pyproject.toml`, `docs/IMPLEMENTATION.md` |
 | Contrato de dados/leakage | implementado | `src/project_cnn_mammo/sprint07.py` |
