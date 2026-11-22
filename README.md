@@ -33,7 +33,17 @@ Veja [`docs/requirements/sprint-07.md`](docs/requirements/sprint-07.md).
 - [`docs/requirements/professor.md`](docs/requirements/professor.md): requisitos extraídos do PDF de orientação.
 - [`docs/requirements/sprint-07.md`](docs/requirements/sprint-07.md): ponto inicial do trabalho.
 - [`docs/requirements/slide-intake.md`](docs/requirements/slide-intake.md): processo para incorporar os slides das disciplinas.
+- [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md): código e próximas verticais das Sprints 7–11.
 - [`docs/STATUS.md`](docs/STATUS.md): distinção entre meta, implementado e medido.
+
+## Verificação local
+
+```bash
+PYTHONPATH=src python -m unittest discover -s tests -v
+python -m compileall -q src tests
+```
+
+As dependências pesadas de treino estão no extra `ml` do `pyproject.toml`; o núcleo de regras e segurança usa somente a biblioteca padrão.
 
 ## Segurança e dados
 

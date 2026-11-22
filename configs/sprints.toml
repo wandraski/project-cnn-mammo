@@ -1,0 +1,43 @@
+[common]
+seeds = [42, 123, 999]
+bootstrap_samples = 1000
+patient_split = true
+final_test_locked = true
+primary_metric = "sensitivity_at_90_specificity"
+
+[sprint07]
+architectures = ["resnet50", "efficientnet_b0", "efficientnet_b3", "convnext_tiny"]
+segmenters = ["unet", "unet_resnet34"]
+resolutions = [224, 384, 512, 1024]
+normalizations = ["zscore", "clahe_zscore"]
+
+[sprint08]
+linear_probe_epochs = 5
+learning_rates = [0.00005, 0.0001, 0.0003]
+batches = [8, 16, 32, 64]
+pretraining = ["imagenet", "radimagenet"]
+calibration = ["none", "isotonic"]
+
+[sprint09]
+imbalance = ["bce", "pos_weight", "weighted_sampler"]
+prevalences = [0.01, 0.035, 0.10, 0.20, 0.30]
+clinical_threshold = 0.22
+anomaly_threshold = 0.65
+batches = [8, 16, 32, 64, 128]
+
+[sprint10]
+tau_clinical = 0.22
+tau_anomaly = 0.68
+alpha = 0.78
+abstention_band = 0.08
+abstention_rates = [0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
+external_sources = ["cmmd", "vindr_mammo"]
+
+[sprint11]
+tta = ["original", "horizontal_flip", "rotate_plus_5", "rotate_minus_5"]
+tta_weights = [0.40, 0.25, 0.175, 0.175]
+clinical_threshold = 0.22
+anomaly_threshold = 0.68
+abstention_band = 0.065
+max_view_gap = 0.35
+modes = ["frozen", "tent_eata"]
