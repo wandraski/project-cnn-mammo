@@ -1,6 +1,6 @@
 # Requisitos iniciais — orientação do professor
 
-Fonte: `projeto_integrador_cancer_mama.pdf`. Este documento resume o PDF; em divergência, o PDF original prevalece.
+Fontes: `projeto_integrador_cancer_mama.pdf` (plano geral) e `arquivos/projeto-final-docs/projeto-integrador-grupo-01.pdf` (plano somente do Grupo 1, subconjunto). Este documento resume os PDFs; em divergência, os PDFs originais prevalecem. Consolidação das orientações definitivas: [`orientacoes-definitivas.md`](orientacoes-definitivas.md).
 
 ## Escopo do Grupo 1
 

@@ -30,7 +30,8 @@ Veja [`docs/requirements/sprint-07.md`](docs/requirements/sprint-07.md).
 
 ## Fontes
 
-- [`docs/requirements/professor.md`](docs/requirements/professor.md): requisitos extraídos do PDF de orientação.
+- [`docs/requirements/orientacoes-definitivas.md`](docs/requirements/orientacoes-definitivas.md): orientações definitivas, metas (`meta`), pesos e matriz de conflitos.
+- [`docs/requirements/professor.md`](docs/requirements/professor.md): requisitos extraídos dos PDFs de orientação.
 - [`docs/requirements/professores-adjacentes.md`](docs/requirements/professores-adjacentes.md): 237 requisitos canônicos de Engenharia de Software e MLOps (99 + 138), com critério de aceite e proveniência.
 - [`docs/requirements/sprint-07.md`](docs/requirements/sprint-07.md): ponto inicial do trabalho.
 - [`docs/requirements/slide-intake.md`](docs/requirements/slide-intake.md): processo para incorporar os slides das disciplinas.
@@ -40,11 +41,43 @@ Veja [`docs/requirements/sprint-07.md`](docs/requirements/sprint-07.md).
 ## Verificação local
 
 ```bash
-PYTHONPATH=src python -m unittest discover -s tests -v
-python -m compileall -q src tests
+make test      # unittest (núcleo stdlib)
+make compile   # compileall
+make smoke     # pipeline de ponta a ponta com dados sintéticos
+make scan      # varredura de segredos
 ```
 
 As dependências pesadas de treino estão no extra `ml` do `pyproject.toml`; o núcleo de regras e segurança usa somente a biblioteca padrão.
+
+## Estrutura (Fase 2)
+
+```
+src/project_cnn_mammo/
+  contracts.py      tipos do pipeline
+  config.py         sprints.toml
+  data.py           manifesto, hash, split por paciente
+  preprocessing.py  TransformPlan e transforms
+  models.py         registry de CNNs/U-Net
+  evaluation.py     AUROC/AUPRC, pontos clínicos, bootstrap
+  tracking.py       MLflow opcional / JSON determinístico
+  registry.py       model card, digest, champion/challenger
+  serving.py        inferência batch + HTTP
+  pipeline.py       orquestração por etapas
+  cli.py            ponto de entrada
+docs/adr/           decisões arquiteturais
+scripts/            varredura de segredos, portão de qualidade, digest de artefato
+.github/workflows/  ci, ct, cd
+dvc.yaml            dag de dados/artefatos
+```
+
+## MLOps
+
+- **CI**: testes, compilação, validação de configuração, varredura de segredos e smoke.
+- **CT**: treino rastreável com DVC + tracking; portão de qualidade em `scripts/quality_gate.py`.
+- **CD**: tag `v*` gera artefato com `SHA256SUMS`, com aprovação humana no ambiente `release`.
+- **DVC remote gratuito**: configurar em `.dvc/config` (Google Drive/rclone, DAGsHub ou Hugging Face).
+
+Decisões: [`docs/adr/`](docs/adr/), convenções: [`docs/COMMITS.md`](docs/COMMITS.md), histórico: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Segurança e dados
 
