@@ -5,14 +5,31 @@ patient_split = true
 final_test_locked = true
 primary_metric = "sensitivity_at_90_specificity"
 
+[treino]
+# Referência de benchmark da equipe na S10, não protocolo universal das Sprints.
+classifier_epochs = 20
+batch_size = 32
+learning_rate = 0.0001
+resolution = 224
+reference_seed = 42
+normalization = "clahe_zscore"
+
 [sprint07]
 architectures = ["resnet50", "efficientnet_b0", "efficientnet_b3", "convnext_tiny"]
 segmenters = ["unet", "unet_resnet34"]
+# Slide solo S7, p. 1 e 5: não confundir com 768x512 da equipe.
+segmenter_input = [512, 512]
+segmenter_loss_weights = {bce = 0.5, dice = 0.5}
 resolutions = [224, 384, 512, 1024]
 normalizations = ["zscore", "clahe_zscore"]
 
 [sprint08]
+# Linear probing de referência, não fine-tuning.
 linear_probe_epochs = 5
+linear_probe_batch_size = 16
+linear_probe_resolution = 224
+linear_probe_learning_rate = 0.0001
+linear_probe_optimizer = "adamw"
 learning_rates = [0.00005, 0.0001, 0.0003]
 batches = [8, 16, 32, 64]
 pretraining = ["imagenet", "radimagenet"]
@@ -24,6 +41,12 @@ prevalences = [0.01, 0.035, 0.10, 0.20, 0.30]
 clinical_threshold = 0.22
 anomaly_threshold = 0.65
 batches = [8, 16, 32, 64, 128]
+# Slide solo S9, p. 4: denominador 16 (a ablação da equipe S7/S8 usa 32).
+resolution = 224
+epochs = 15
+optimizer = "adamw"
+learning_rate = 0.0001
+linear_reference_batch = 16
 
 [sprint10]
 tau_clinical = 0.22

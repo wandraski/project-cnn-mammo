@@ -79,16 +79,21 @@ def fit(
     learning_rate: float = 1e-4,
     seed: int = 42,
     device: str = "cpu",
+    linear_probe: bool = False,
 ) -> dict[str, list[float]]:
     """Loop mínimo com validação, BCEWithLogits e registro por época."""
     torch, _ = require_torch()
     set_determinism(seed)
     model.to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    if linear_probe:
+        model.requires_grad_(False)
+        head = model.fc if hasattr(model, "fc") else model.classifier[-1]
+        head.requires_grad_(True)
+    optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=learning_rate)
     criterion = torch.nn.BCEWithLogitsLoss()
     history: dict[str, list[float]] = {"train_loss": [], "val_loss": []}
     for _ in range(epochs):
-        model.train()
+        model.train(not linear_probe)  # mantém BatchNorm do backbone congelado
         losses: list[float] = []
         for images, labels in train_loader:
             images = images.to(device)

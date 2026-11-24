@@ -132,7 +132,7 @@ class TestExperiment(unittest.TestCase):
         self.assertEqual(pareto_front(costs, metrics), [1, 2])
 
     def test_ablations_match_protocol(self):
-        self.assertEqual([spec.params["batch_size"] for spec in batch_ablation()], [8, 16, 32, 64])
+        self.assertEqual({spec.params["batch_size"] for spec in batch_ablation()}, {8, 16, 32, 64, 128})
         self.assertEqual(
             [spec.params["resolution"] for spec in resolution_ablation()], [224, 384, 512, 1024]
         )
@@ -152,6 +152,33 @@ class TestTorchGate(unittest.TestCase):
         with self.assertRaises(RuntimeError) as ctx:
             require_torch()
         self.assertIn("extra `ml`", str(ctx.exception))
+
+
+class TestEpochPlan(unittest.TestCase):
+    def test_slide_protocols_do_not_share_epochs_or_lr_reference(self):
+        from project_cnn_mammo.training_run import epoch_plan
+
+        self.assertEqual(epoch_plan(), {"benchmark": 20, "linear_probe": 5, "batch_ablation": 15})
+        plan = {
+            (spec.params["batch_size"], spec.params["lr_rule"]): spec.params["learning_rate"]
+            for spec in batch_ablation()
+        }
+        self.assertEqual(len(plan), 10)
+        self.assertEqual(plan[16, "linear"], plan[16, "fixed"])
+        self.assertEqual(plan[128, "fixed"], 1e-4)
+        self.assertEqual(plan[128, "linear"], 8e-4)
+
+    def test_training_requires_dataset(self):
+        from project_cnn_mammo.training_run import train_on_directory
+
+        try:
+            import torch  # noqa: F401
+
+            self.skipTest("torch instalado")
+        except ImportError:
+            pass
+        with self.assertRaises((FileNotFoundError, RuntimeError)):
+            train_on_directory("/tmp/dataset-inexistente-xyz", architecture="resnet50")
 
 
 if __name__ == "__main__":

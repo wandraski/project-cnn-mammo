@@ -29,6 +29,8 @@
 | Entrada Modal (GPU) | implementado | `modal_app.py` |
 | Dataset de desenvolvimento (`subset-multibase-cancer-mama`) | registrado; estrutura a validar no Kaggle | `datasets.py` |
 | Execução em GPU/datasets reais | congelada (decisão do usuário, 2026-11-23) | — |
+| Parâmetros dos slides S7–S11 | reconciliados por experimento; conferir lacunas e diferenças de fonte | `configs/sprints.toml`, `docs/IMPLEMENTATION.md` |
+| Entrada do benchmark CNN | exige manifesto de desenvolvimento com split por paciente; não validada em GPU | `notebooks/03`, `04`, `training_run.py` |
 | Experimentos e métricas reais | não iniciados | — |
 | Resultados dos slides | metas, não medidos | fontes externas ao repositório |
 | Requisitos dos demais professores | pendentes | `docs/requirements/slide-intake.md` |

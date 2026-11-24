@@ -50,27 +50,27 @@ NOTEBOOKS: list[tuple[str, str, str, list[tuple[str, str]]]] = [
     ),
     (
         "03_baseline",
-        "03 · Baselines CNN e U-Net",
-        "ResNet50 (ImageNet), U-Net do zero e U-Net+ResNet34 sob o mesmo protocolo.",
+        "03 · Baseline CNN de referência",
+        "ResNet50 ImageNet; use apenas manifesto de desenvolvimento. U-Net tem protocolo separado e não roda aqui.",
         [
-            ("code", "from project_cnn_mammo.training import build_classifier, build_segmenter, set_determinism\nset_determinism(42)\nmodel = build_classifier('resnet50')\nprint(type(model).__name__)"),
-            ("code", "segmenter = build_segmenter('unet_resnet34')\nprint(type(segmenter).__name__)"),
-            ("code", "from project_cnn_mammo.evaluation import evaluate\nmetrics = evaluate(labels=[0,0,1,1], scores=[0.1,0.2,0.8,0.9], samples=200, seed=42)\nprint(metrics)"),
+            ("code", "from project_cnn_mammo.config import load_config\nprint(load_config().section('treino'))"),
+            ("code", "from pathlib import Path\nfrom project_cnn_mammo.training_run import train_on_directory\ndataset_dir = ''  # informe o diretório de desenvolvimento com manifest.csv\nif dataset_dir:\n    resumo = train_on_directory(Path(dataset_dir), output_dir='saida')\n    print({chave: resumo[chave] for chave in ('architecture','seed','epochs','resolution','batch_size','learning_rate')})\nelse:\n    print('Treino não iniciado: informe dataset_dir.')"),
         ],
     ),
     (
         "04_benchmark",
         "04 · Benchmark de encoders",
-        "Todas as CNNs do escopo no mesmo split, seed e hiperparâmetros.",
+        "Grade planejada do benchmark de referência, não execução nem total das Sprints.",
         [
-            ("code", "from project_cnn_mammo.experiment import expand_grid\nbase = {'epochs': 5, 'learning_rate': 1e-4, 'batch_size': 16}\nspecs = expand_grid(base, {'architecture': ['resnet50','efficientnet_b0','efficientnet_b3','convnext_tiny']})\nprint(len(specs), 'execuções')\nprint([s.tag for s in specs])"),
+            ("code", "from project_cnn_mammo.config import load_config\nconfig = load_config()\nbenchmark = config.section('treino')\nprint(benchmark)\nprint('CNNs:', config.architectures, 'seeds:', config.common.seeds)\nprint('Épocas planejadas no benchmark:', len(config.architectures) * len(config.common.seeds) * benchmark['classifier_epochs'])"),
         ],
     ),
     (
         "05_calibracao",
         "05 · Calibração",
-        "Linear probing/fine-tuning e calibração isotrópica só na validação.",
+        "Protocolo de linear probing da S8; exemplos sintéticos de calibração, sem fine-tuning neste notebook.",
         [
+            ("code", "from project_cnn_mammo.config import load_config\ns8 = load_config().section('sprint08')\nprint({k: v for k, v in s8.items() if k.startswith('linear_probe_')})"),
             ("code", "from project_cnn_mammo.sprint08 import calibration_metrics\nm = calibration_metrics(labels=[0,0,1,1], probabilities=[0.1,0.2,0.7,0.9])\nprint(m)"),
             ("code", "from project_cnn_mammo.evaluation import threshold_at_specificity\nprint('limiar:', threshold_at_specificity([0,0,1,1],[0.1,0.2,0.8,0.9]))"),
         ],
