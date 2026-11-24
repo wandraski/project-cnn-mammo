@@ -23,8 +23,8 @@ NOTEBOOKS: list[tuple[str, str, str, list[tuple[str, str]]]] = [
         "Baixa/valida os dados, registra licença e monta o manifesto com SHA-256.",
         [
             ("code", "import sys, pathlib\nsys.path.insert(0, str(pathlib.Path.cwd() / 'src'))\nfrom project_cnn_mammo.datasets import DATASETS, INBREAST_NOTE\nprint(INBREAST_NOTE)\nfor name, source in DATASETS.items():\n    print(f'{name:20s} {source.role:32s} acordo={source.requires_agreement}')"),
-            ("code", "from project_cnn_mammo.data import scan_directory, resolve_labels\nrows = scan_directory('/data/cbisddsm', source='cbisddsm')\nprint(len(rows), 'arquivos encontrados')\nprint(rows[0] if rows else 'sem arquivos: monte o volume do dataset primeiro')"),
-            ("code", "import csv, pathlib\npathlib.Path('data/manifests').mkdir(parents=True, exist_ok=True)\nwith open('data/manifests/cbisddsm.csv', 'w', newline='', encoding='utf-8') as stream:\n    writer = csv.DictWriter(stream, fieldnames=['sample_key','patient_key','path','source','label','view','laterality','split','sha256'])\n    writer.writeheader()\n    writer.writerows(rows)"),
+            ("code", "from project_cnn_mammo.datasets import scan_directory\nbase = '/data/cbisddsm'\ntry:\n    rows = scan_directory(base, source='cbisddsm')\n    print(len(rows), 'arquivos encontrados')\nexcept FileNotFoundError:\n    rows = []\n    print('volume nao montado: anexe o CBIS-DDSM e ajuste `base`')"),
+            ("code", "import csv, pathlib\npathlib.Path('data/manifests').mkdir(parents=True, exist_ok=True)\nwith open('data/manifests/cbisddsm.csv', 'w', newline='', encoding='utf-8') as stream:\n    writer = csv.DictWriter(stream, fieldnames=['sample_key','patient_key','path','source','label','view','laterality','split','sha256'])\n    writer.writeheader()\n    writer.writerows(rows)\nprint('manifesto gravado' if rows else 'nenhuma linha para gravar')"),
         ],
     ),
     (
@@ -32,7 +32,7 @@ NOTEBOOKS: list[tuple[str, str, str, list[tuple[str, str]]]] = [
         "01 · Auditoria de dados",
         "Sanidade: pacientes duplicados, vazamento entre splits, distribuição por vista/lateralidade.",
         [
-            ("code", "from project_cnn_mammo.data import read_manifest, split_plan\nentries = read_manifest('data/manifests/cbisddsm.csv')\nplan = split_plan(entries)\nprint(plan.counts)\nassert plan.leakage_free, 'vazamento detectado'"),
+            ("code", "from pathlib import Path\nfrom project_cnn_mammo.data import read_manifest, split_plan\nmanifesto = Path('data/manifests/cbisddsm.csv')\nif not manifesto.exists():\n    raise SystemExit('rode 00_ingestao primeiro (ou anexe o CBIS-DDSM)')\nentries = read_manifest(manifesto)\nplan = split_plan(entries)\nprint(plan.counts)\nassert plan.leakage_free, 'vazamento detectado'"),
             ("code", "from collections import Counter\nprint(Counter((e.view, e.laterality) for e in entries))\nprint(Counter(e.label for e in entries))"),
         ],
     ),
@@ -106,7 +106,7 @@ NOTEBOOKS: list[tuple[str, str, str, list[tuple[str, str]]]] = [
         "09 · Exportação e release",
         "Artefato, model card, digest e registro champion/challenger.",
         [
-            ("code", "from project_cnn_mammo.registry import ModelRegistry, artifact_digest\nfrom project_cnn_mammo.contracts import ModelCard\ncard = ModelCard(name='resnet50', version='0.1.0', architecture='resnet50', weights_sha256='0'*64, data_version='cbisddsm-v1', threshold=0.22, metrics={'auroc': 0.86})\nregistry = ModelRegistry('artifacts/registry')\nprint(registry.register(card, __import__('pathlib').Path('artifacts/weights.bin')))"),
+            ("code", "from pathlib import Path\nfrom project_cnn_mammo.registry import ModelRegistry\nfrom project_cnn_mammo.contracts import ModelCard\ncard = ModelCard(name='resnet50', version='0.1.0', architecture='resnet50', weights_sha256='0'*64, data_version='cbisddsm-v1', threshold=0.22, metrics={'auroc': 0.86})\npesos = Path('artifacts/weights.bin')\npesos.parent.mkdir(parents=True, exist_ok=True)\nif not pesos.exists():\n    pesos.write_bytes(b'placeholder-weights')\nregistry = ModelRegistry('artifacts/registry')\nprint(registry.register(card, pesos))"),
             ("code", "from project_cnn_mammo.cli import main\nmain(['--config','configs/sprints.toml','smoke'])"),
         ],
     ),

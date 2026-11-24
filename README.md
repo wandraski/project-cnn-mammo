@@ -47,6 +47,14 @@ make smoke     # pipeline de ponta a ponta com dados sintéticos
 make scan      # varredura de segredos
 ```
 
+Os cadernos da Fase 3 ficam em [`notebooks/`](notebooks/) (ordem canônica de execução). Para rodá-los localmente sem Jupyter instalado:
+
+```bash
+PYTHONPATH=src python scripts/run_notebooks.py
+```
+
+No Colab/Kaggle basta abrir cada `.ipynb` com GPU e ajustar o caminho do dataset; no Modal use `modal run modal_app.py`.
+
 As dependências pesadas de treino estão no extra `ml` do `pyproject.toml`; o núcleo de regras e segurança usa somente a biblioteca padrão.
 
 ## Estrutura (Fase 2)
