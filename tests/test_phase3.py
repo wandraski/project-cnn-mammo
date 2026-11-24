@@ -87,10 +87,16 @@ class TestDicom(unittest.TestCase):
 class TestDatasets(unittest.TestCase):
     def test_scope_datasets_registered(self):
         self.assertEqual(
-            set(DATASETS), {"cbisddsm", "vindr_mammo", "cmmd", "rsna_breast_cancer"}
+            set(DATASETS),
+            {"cbisddsm", "vindr_mammo", "cmmd", "rsna_breast_cancer", "multibase_subset"},
         )
         self.assertTrue(dataset("vindr_mammo").requires_agreement)
         self.assertIn("INbreast", INBREAST_NOTE)
+
+    def test_multibase_subset_is_development_only(self):
+        source = dataset("multibase_subset")
+        self.assertIn("desenvolvimento", source.role)
+        self.assertTrue(source.url.endswith("subset-multibase-cancer-mama"))
 
     def test_scan_and_resolve(self):
         with tempfile.TemporaryDirectory() as tmp:

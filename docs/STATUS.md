@@ -27,6 +27,7 @@
 | Matriz experimental e Pareto | implementado | `experiment.py` |
 | Aprendizado não supervisionado pré-CNN | implementado | `unsupervised.py` (Gaussian/kNN one-class + autoencoder opcional) |
 | Entrada Modal (GPU) | implementado | `modal_app.py` |
+| Dataset de desenvolvimento (`subset-multibase-cancer-mama`) | registrado; estrutura a validar no Kaggle | `datasets.py` |
 | Execução em GPU/datasets reais | congelada (decisão do usuário, 2026-11-23) | — |
 | Experimentos e métricas reais | não iniciados | — |
 | Resultados dos slides | metas, não medidos | fontes externas ao repositório |

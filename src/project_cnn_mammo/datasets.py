@@ -51,6 +51,12 @@ DATASETS: dict[str, DatasetSource] = {
         requires_agreement=True,
         recommended_split="test",
     ),
+    "multibase_subset": DatasetSource(
+        "Subset multibase — câncer de mama (Kaggle)",
+        "desenvolvimento local/Colab/Kaggle",
+        "verificar licença na página do dataset",
+        "https://www.kaggle.com/datasets/marcowandraski/subset-multibase-cancer-mama",
+    ),
 }
 
 INBREAST_NOTE = (
