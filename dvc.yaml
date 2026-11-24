@@ -1,0 +1,35 @@
+# DVC: dag de dados/artefatos. O remote e definido em `.dvc/config` (nao versionado).
+stages:
+  ingest:
+    cmd: PYTHONPATH=src python -m project_cnn_mammo.cli manifest --manifest data/manifests/cbisddsm.csv
+    deps:
+      - src/project_cnn_mammo/data.py
+      - configs/sprints.toml
+    outs:
+      - data/manifests:
+          cache: true
+
+  preprocess:
+    cmd: PYTHONPATH=src python -m project_cnn_mammo.cli preprocess --image data/raw/sample.json
+    deps:
+      - src/project_cnn_mammo/preprocessing.py
+    outs:
+      - data/processed:
+          cache: true
+
+  evaluate:
+    cmd: PYTHONPATH=src python -m project_cnn_mammo.cli evaluate --labels ${labels} --scores ${scores}
+    deps:
+      - src/project_cnn_mammo/evaluation.py
+    metrics:
+      - outputs/metrics.json:
+          cache: false
+
+  export:
+    cmd: PYTHONPATH=src python -m project_cnn_mammo.cli register --card artifacts/model_card.json --weights artifacts/weights.bin
+    deps:
+      - artifacts/weights.bin
+      - artifacts/model_card.json
+    outs:
+      - artifacts/registry:
+          cache: false

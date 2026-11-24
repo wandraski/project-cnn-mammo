@@ -1,0 +1,14 @@
+data/
+mlruns/
+outputs/
+artifacts/
+__pycache__/
+*.pyc
+.env
+.dvc/config
+*.dcm
+*.pth
+*.pt
+*.ckpt
+*.onnx
+.git/

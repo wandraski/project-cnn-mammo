@@ -15,6 +15,9 @@ kaggle.json
 /data/
 /outputs/
 /mlruns/
+/artifacts/
+.dvc/config
+.dvc/tmp
 *.db
 *.dcm
 *.dicom

@@ -1,0 +1,47 @@
+name: ct
+
+# CT = continuous training: roda treino rastreavel a cada push em main ou por
+# agenda, registra metricas no tracking e aplica o portao de qualidade.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1" # segundas, 03:17 UTC
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: dependencias de ml
+        run: python -m pip install -e '.[ml]'
+      - name: restaurar dados versionados
+        run: |
+          python -m pip install dvc[s3]
+          dvc pull || echo "sem remote configurado; segue com dados locais"
+      - name: treino rastreavel
+        env:
+          MLFLOW_TRACKING_URI: ${{ vars.MLFLOW_TRACKING_URI }}
+        run: PYTHONPATH=src python -m project_cnn_mammo.cli --config configs/sprints.toml smoke
+      - name: portao de qualidade
+        run: |
+          PYTHONPATH=src python scripts/quality_gate.py outputs/mlruns outputs/metrics.json
+      - name: champion/challenger
+        if: success()
+        run: |
+          PYTHONPATH=src python - <<'PY'
+          from pathlib import Path
+          from project_cnn_mammo.registry import ModelRegistry
+          registry = ModelRegistry("artifacts/registry")
+          champion = registry.champion()
+          print("champion:", None if champion is None else champion.get("name"))
+          PY
+      - name: artefatos do run
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-run
+          path: |
+            outputs/mlruns/
+            artifacts/
