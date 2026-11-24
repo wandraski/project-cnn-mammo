@@ -2,7 +2,7 @@
 
 ## Commits
 
-- Padrão **Conventional Commits**: `tipo(escopo): descrição imperativa`.
+- Mensagens **em português**, padrão **Conventional Commits**: `tipo(escopo): descrição imperativa`.
 - Tipos usados: `feat`, `fix`, `docs`, `test`, `refactor`, `ci`, `cd`, `ct`, `build`, `chore`.
 - Uma intenção por commit. Commits pequenos e reversíveis.
 - **Autor único**: Marco Antonio Wandraski (`@wandraski`). Proibido `Co-authored-by` e qualquer coautoria.
@@ -10,9 +10,9 @@
 Exemplos:
 
 ```
-feat(data): adiciona validacao de manifesto por paciente
-fix(evaluation): corrige IC bootstrap em amostra degenerada
-docs(adr): registra decisao da arquitetura lambda
+feat(dados): adiciona validação de manifesto por paciente
+fix(avaliação): corrige IC bootstrap em amostra degenerada
+docs(adr): registra decisão da arquitetura lambda
 ```
 
 ## Código
