@@ -2,6 +2,10 @@
 
 Projeto individual de visão computacional para apoio à análise de mamografias, iniciado a partir das metas da **Sprint 7**.
 
+## Rodar os cadernos
+
+Comece pelo [guia de execução das Sprints 07–11](sprints/README.md) para Colab, Kaggle e Modal. Use os cadernos em `sprints/`; `notebooks/` contém os exemplos legados.
+
 ## Estado atual
 
 - repositório novo, sem reaproveitamento de histórico Git da antiga equipe;
