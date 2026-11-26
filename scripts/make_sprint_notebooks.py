@@ -47,7 +47,15 @@ OUTPUT = Path('/kaggle/working')
 '''
 KAGGLE_TRAIN = '''slug = 'subset-multibase-cancer-mama'
 roots = [p for p in (mounted / slug, mounted / 'datasets' / 'marcowandraski' / slug) if p.is_dir()]
-DATA = roots[0] if len(roots) == 1 else mounted / slug  # ajuste se o input tiver outro nome
+DATA = roots[0] if len(roots) == 1 else mounted / 'datasets' / 'marcowandraski' / slug
+if (DATA / 'dataset').is_dir():
+    DATA = DATA / 'dataset'
+'''
+KAGGLE_TASK = '''# ponytail: adapta o CSV oficial no diretório temporário já existente.
+if (DATA / 'metadata/tasks/manifesto_benigno_x_maligno.csv').is_file():
+    from project_cnn_mammo.training_run import kaggle_task_manifest
+    MANIFEST = PROJECT / 'manifest-dev.csv'
+    kaggle_task_manifest(DATA, MANIFEST)
 '''
 
 BOOTSTRAP = '''# ponytail: código e TOML embutidos; extração temporária, sem ZIP de código separado.
@@ -75,7 +83,7 @@ TRAIN = '''from project_cnn_mammo.training_run import development_manifest
 if not DATA.is_dir():
     raise FileNotFoundError(f'Dados não encontrados em {DATA}. Confira DATA na primeira célula.')
 MANIFEST = DATA / 'manifest.csv'
-if not MANIFEST.is_file():
+{task_manifest}if not MANIFEST.is_file():
     candidates = {sidecars}
     if len(candidates) != 1:
         raise FileNotFoundError('Forneça um único manifest.csv real na raiz do dataset ou como arquivo separado.')
@@ -163,7 +171,8 @@ def make_notebook(n: int, platform: str, payload: str) -> dict[str, object]:
         if n < 10:
             sidecars = ("[p for p in (OUTPUT / 'manifest.csv',) if p.is_file()]" if platform == 'colab'
                         else "sorted(mounted.rglob('manifest.csv'))")
-            body.append(('code', TRAIN.replace('{sidecars}', sidecars)))
+            task_manifest = KAGGLE_TASK if platform == 'kaggle' else ''
+            body.append(('code', TRAIN.replace('{task_manifest}', task_manifest).replace('{sidecars}', sidecars)))
         body.append(('code', RUN.format(n=n, smoke='SMOKE' if n < 10 else 'False') +
                      (DOWNLOAD_COLAB if platform == 'colab' else DOWNLOAD_KAGGLE)))
     return {

@@ -91,7 +91,7 @@ PLATAFORMA = {
     'kaggle': """## Rodar no Kaggle
 
 1. Importe o `.ipynb`. Escolha GPU nas S07–S09; nas S10/S11, CPU basta.
-2. Use **Add Input** para anexar a entrada descrita acima. Se o subset não trouxer o manifesto, anexe o `manifest.csv` separado. Ajuste `DATA` na primeira célula se o caminho do subset for diferente.
+2. Nas S07–S09, anexe `marcowandraski/subset-multibase-cancer-mama` em **Add Input**. O notebook adapta o manifesto benigno × maligno automaticamente, usando apenas `train`/`val`. Nas S10/S11, anexe o CSV de predições indicado acima.
 3. Execute tudo. Não precisa anexar código; o ZIP aparece em `/kaggle/working/`.""",
     'modal': '''## Passo a passo no Modal
 

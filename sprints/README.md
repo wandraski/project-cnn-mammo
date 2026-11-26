@@ -39,7 +39,7 @@ Os notebooks de Colab e Kaggle já incluem código e configuração. Não envie 
 
 **Colab:** abra o `.ipynb` e selecione GPU para S07–S09. Use os dados em `MyDrive/mammo/desenvolvimento/` ou, nas S07–S09, ative `BAIXAR_DO_KAGGLE = True` na primeira célula e habilite o segredo `KAGGLE_API_TOKEN`. Se o subset não trouxer o manifesto, coloque-o em `MyDrive/mammo/`. O CSV das S10/S11 também pode ficar diretamente em `MyDrive/mammo/`. Os ZIPs ficam nessa pasta e são enviados para download automático.
 
-**Kaggle:** importe o `.ipynb` e anexe os dados em **Add Input**. Use GPU nas S07–S09 e anexe o manifesto separadamente se faltar. Ajuste `DATA` na primeira célula se o caminho do subset for diferente. Nas S10/S11, anexe apenas o CSV da sprint. Habilite internet se for preciso instalar decodificadores DICOM ou baixar pesos ImageNet. O ZIP fica diretamente em `/kaggle/working/`.
+**Kaggle:** importe o `.ipynb` e anexe os dados em **Add Input**. Use GPU nas S07–S09: para `marcowandraski/subset-multibase-cancer-mama`, o notebook detecta e adapta `dataset/metadata/tasks/manifesto_benigno_x_maligno.csv` sem copiar imagens e sem incluir `test`. Para outros dados, forneça um `manifest.csv` compatível. Ajuste `DATA` na primeira célula se o caminho do subset for diferente. Nas S10/S11, anexe apenas o CSV da sprint. Habilite internet se for preciso instalar decodificadores DICOM ou baixar pesos ImageNet. O ZIP fica diretamente em `/kaggle/working/`.
 
 **Modal:** execute na raiz do checkout; o notebook de `modal/` é um lançador local, não precisa de Jupyter para usar os comandos abaixo. Confira os custos/cota do workspace. Crie volumes uma vez e selecione um diretório contendo **somente** os dados de desenvolvimento autorizados.
 

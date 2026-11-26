@@ -60,6 +60,32 @@ def build_dataset(rows: list[ManifestEntry], resolution: int):
     return _MammoDataset()
 
 
+def kaggle_task_manifest(data_dir: Path, output: Path) -> None:
+    """Converte o manifesto da tarefa sem tocar nas imagens do split test."""
+    source = data_dir / 'metadata/tasks/manifesto_benigno_x_maligno.csv'
+    columns = ('image_id', 'patient_id', 'relative_path', 'dataset', 'label_task', 'split')
+    labels = {'benigno': 0, 'maligno': 1}
+    rows = []
+    with source.open(newline='', encoding='utf-8-sig') as stream:
+        reader = csv.DictReader(stream)
+        if not set(columns) <= set(reader.fieldnames or ()):
+            raise ValueError(f'Colunas obrigatórias no manifesto Kaggle: {", ".join(columns)}')
+        for line, row in enumerate(reader, start=2):
+            split = (row['split'] or '').strip().lower()
+            if split == 'test':
+                continue
+            if split not in {'train', 'val'} or any(not (row[key] or '').strip() for key in columns):
+                raise ValueError(f'Linha {line}: split ou campo obrigatório inválido no manifesto Kaggle')
+            image, patient, path, dataset, label, _ = (row[key].strip() for key in columns)
+            if label.lower() not in labels:
+                raise ValueError(f'Linha {line}: label_task precisa ser benigno ou maligno')
+            rows.append((f'{dataset}:{image}', patient, path, dataset, labels[label.lower()], split))
+    with output.open('w', newline='', encoding='utf-8') as stream:
+        writer = csv.writer(stream)
+        writer.writerow(('sample_key', 'patient_key', 'path', 'source', 'label', 'split'))
+        writer.writerows(rows)
+
+
 def development_manifest(data_dir: Path | str, manifest_path: Path | None = None) -> list[ManifestEntry]:
     """Valida os metadados sem abrir imagens nem consultar o teste final."""
     base = Path(data_dir).resolve()
