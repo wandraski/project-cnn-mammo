@@ -35,11 +35,11 @@ sprint11_val.csv → sample_key,split,label,logit_original,logit_hflip,logit_plu
 
 ## 2. Escolha uma plataforma
 
-Gere o pacote de código na raiz do checkout: `python scripts/package_sprints.py`. Sai em `outputs/mammo-codigo.zip`, só com Python e TOML. Não depende do repositório estar público.
+Os notebooks de Colab e Kaggle já incluem código e configuração. Não envie `mammo-codigo.zip`.
 
-**Colab:** copie o ZIP para `MyDrive/mammo/mammo-codigo.zip` e os dados para `MyDrive/mammo/desenvolvimento/`. Abra o `.ipynb` de `colab/`, escolha GPU para S07–S09, rode as células na ordem e autorize o Drive. A saída fica em `MyDrive/mammo/resultados/`. Não precisa de chave Kaggle se os dados já estiverem no Drive.
+**Colab:** abra o `.ipynb` e selecione GPU para S07–S09. Use os dados em `MyDrive/mammo/desenvolvimento/` ou, nas S07–S09, ative `BAIXAR_DO_KAGGLE = True` na primeira célula e habilite o segredo `KAGGLE_API_TOKEN`. Se o subset não trouxer o manifesto, coloque-o em `MyDrive/mammo/`. O CSV das S10/S11 também pode ficar diretamente em `MyDrive/mammo/`. Os ZIPs ficam nessa pasta e são enviados para download automático.
 
-**Kaggle:** importe o `.ipynb` de `kaggle/`, habilite GPU para S07–S09 e use **Add Input** para anexar o subset e um input de código que contenha `mammo-codigo.zip`. Se a versão do subset não trouxer o manifesto, anexe `manifest.csv` junto ao input de código: os paths continuam relativos a `DATA`, sem precisar reenviar imagens. Se o layout mudar, ajuste `DATA` na primeira célula. Para S10/S11, aponte `DATA` para o input que contém o CSV de predições. Inputs são lidos no lugar, sem cópia; não precisa de API key. Habilite internet se o runtime precisar instalar decodificadores DICOM ou baixar pesos ImageNet. Em ambientes sem internet use dependências e pesos já disponíveis, ou rode o smoke com dados PNG/JPEG. A saída fica em `/kaggle/working/resultados/`; preserve a saída ao salvar a versão ou baixe-a.
+**Kaggle:** importe o `.ipynb` e anexe os dados em **Add Input**. Use GPU nas S07–S09 e anexe o manifesto separadamente se faltar. Ajuste `DATA` na primeira célula se o caminho do subset for diferente. Nas S10/S11, anexe apenas o CSV da sprint. Habilite internet se for preciso instalar decodificadores DICOM ou baixar pesos ImageNet. O ZIP fica diretamente em `/kaggle/working/`.
 
 **Modal:** execute na raiz do checkout; o notebook de `modal/` é um lançador local, não precisa de Jupyter para usar os comandos abaixo. Confira os custos/cota do workspace. Crie volumes uma vez e selecione um diretório contendo **somente** os dados de desenvolvimento autorizados.
 
@@ -61,4 +61,4 @@ O resultado haverá de imprimir o comando `modal volume get`. Modal usa o login 
 2. Se funcionou, use `SMOKE=False` nas S07–S09 (Modal: `--mode experiment`). Isso usa os parâmetros do TOML. S09 não dispara a grade toda ao clicar em Run All.
 3. Use S10/S11 somente depois que os CSVs reais exigidos estiverem disponíveis. Não haverá números de teste final nesses cadernos.
 
-Erros comuns: `manifest.csv` ausente → confira montagem e `DATA`; `CUDA indisponível` → troque o runtime para GPU e reinicie; `torchvision` incompatível → reinicie no ambiente padrão (não atualize só um dos dois pacotes); erro ao decodificar DICOM → habilite internet para os plugins ou prepare imagens PNG autorizadas; OOM → não trate um batch menor como o braço original. Os cadernos não pedem credenciais nem registram pesos/outputs em repositório.
+Erros comuns: `manifest.csv` ausente → confira montagem e `DATA`; `CUDA indisponível` → troque o runtime para GPU e reinicie; `torchvision` incompatível → reinicie no ambiente padrão (não atualize só um dos dois pacotes); erro ao decodificar DICOM → habilite internet para os plugins ou prepare imagens PNG autorizadas; OOM → não trate um batch menor como o braço original. Nunca escreva tokens em células; o download opcional lê o segredo do Colab. Não registre dados nem resultados em Git.

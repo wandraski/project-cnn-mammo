@@ -20,6 +20,35 @@ class SprintDeliveryTests(unittest.TestCase):
                 if cell['cell_type'] == 'code':
                     compile(cell['source'], str(path), 'exec')
 
+    def test_cloud_notebooks_bundle_code_and_zip_only_current_run(self):
+        root = Path(__file__).resolve().parents[1] / 'sprints'
+        for platform in ('colab', 'kaggle'):
+            notebook = root / 'sprint-10' / platform / f'sprint_10_{platform}.ipynb'
+            cells = [c['source'] for c in json.loads(notebook.read_text())['cells'] if c['cell_type'] == 'code']
+            with TemporaryDirectory() as folder:
+                output = Path(folder)
+                (output / 'old-results.zip').touch()
+                state = {'DATA': output, 'OUTPUT': output, 'ARM': ''}
+                exec(cells[1], state)  # bootstrap embutido, sem depender da plataforma
+                self.assertTrue((state['PROJECT'] / 'configs' / 'sprints.toml').is_file())
+                self.addCleanup(state['CODE_DIR'].cleanup)
+                (output / 'sprint10_val.csv').write_text('sample_key,split,p_cnn,s_anom,unet_conf\n'
+                                                       'a,val,0.1,0.9,0.9\n')
+                from unittest.mock import Mock, patch
+                from zipfile import ZipFile
+                colab = Mock()
+                google = Mock(colab=colab)
+                with patch.dict('sys.modules', {'google': google, 'google.colab': colab}):
+                    exec(cells[-1], state)
+                if platform == 'colab':
+                    colab.files.download.assert_called_once_with(str(state['archive']))
+                archives = list(output.glob('sprint-10-*.zip'))
+                self.assertEqual(len(archives), 1)
+                with ZipFile(archives[0]) as archive:
+                    self.assertIn('summary.json', archive.namelist())
+                    self.assertNotIn('old-results.zip', archive.namelist())
+                self.assertFalse(any(path.is_dir() for path in output.iterdir()))
+
     def test_final_test_split_is_refused_before_opening_images(self):
         with TemporaryDirectory() as folder:
             root = Path(folder)
